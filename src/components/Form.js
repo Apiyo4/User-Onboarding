@@ -1,9 +1,10 @@
 import React from 'react';
 import {withFormik, Form,Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
+import Axios from 'axios';
 
 function UserForm(props){
-    console.log(props);
+   
     return(
         <Form>
             <ErrorMessage name="name" render= {msg => <div className='error' >{msg}</div>} />
@@ -48,6 +49,17 @@ const UserFormWithFormik = withFormik({
        email:  Yup.string().email('Invalid email').required("Please enter your email"),
        password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required("Please enter password"),
        term_of_service: Yup.boolean().required("Please agree to our terms of service")
-    })
+    }),
+
+    handleSubmit(values, tools){
+        Axios.post("https://reqres.in/api/users", values)
+        .then(response=>{
+            console.log(response);
+            tools.resetForm();
+        })
+        .catch(error=>{
+            console.log(error);
+        })
+    }
 })(UserForm);
 export default UserFormWithFormik;
