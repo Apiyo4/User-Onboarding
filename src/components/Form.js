@@ -1,22 +1,27 @@
 import React from 'react';
-import {withFormik, Form,Field} from 'formik';
+import {withFormik, Form,Field, ErrorMessage} from 'formik';
+import * as Yup from 'yup';
 
 function UserForm(props){
     console.log(props);
     return(
-        <form>
+        <Form>
+            <ErrorMessage name="name" render= {msg => <div className='error' >{msg}</div>} />
             <label>Name:
                 <Field type="text" name="name" placeholder="Enter name" />
             </label>
             <br />
+            <ErrorMessage name='email' render={msg => <div className="error">{msg}</div>} />
             <label>Email:
                 <Field type='text' name='email' placeholder='Enter email' />
             </label>
             <br />
+    <ErrorMessage name='password' render={msg => <div className="error">{msg}</div>} />
             <label> Password:
                 <Field type='password' name='password' placeholder='Enter password' />
             </label>
             <br />
+    <ErrorMessage name="term_of_service" render={msg => <div className='error'>{msg}</div>} />
             <label> Term of Service
                 <Field type='checkbox' name="term_of_service" />
             </label>
@@ -24,7 +29,7 @@ function UserForm(props){
             <br />
             <input type="submit" />
 
-        </form>
+        </Form>
     )
 }
 
@@ -37,6 +42,12 @@ const UserFormWithFormik = withFormik({
             password: '',
             term_of_service: false
         }
-    }
+    },
+   validationSchema: Yup.object().shape({
+       name: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required("Please enter your name"),
+       email:  Yup.string().email('Invalid email').required("Please enter your email"),
+       password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required("Please enter password"),
+       term_of_service: Yup.boolean().required("Please agree to our terms of service")
+    })
 })(UserForm);
 export default UserFormWithFormik;
