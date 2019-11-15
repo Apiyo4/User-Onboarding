@@ -1,11 +1,14 @@
 import React from 'react';
-import {withFormik, Form,Field, ErrorMessage} from 'formik';
+import {withFormik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-import Axios from 'axios';
+import axios from 'axios';
+import UserDetails from './UserDetails';
 
 function UserForm(props){
-   
+    
     return(
+        <div>
+            
         <Form>
             <ErrorMessage name="name" render= {msg => <div className='error' >{msg}</div>} />
             <label>Name:
@@ -31,6 +34,18 @@ function UserForm(props){
             <input type="submit" />
 
         </Form>
+        <div>
+        <h2>Submited Users</h2>
+        
+       { props.users.map((user, index)=>{
+           return(
+            <UserDetails user ={user} key={index}/>
+           ) 
+        })
+    } 
+        </div>
+        
+        </div>
     )
 }
 
@@ -52,10 +67,17 @@ const UserFormWithFormik = withFormik({
     }),
 
     handleSubmit(values, tools){
-        Axios.post("https://reqres.in/api/users", values)
+        
+        axios.post("https://reqres.in/api/users", values)
         .then(response=>{
-            console.log(response);
+            // console.log(response);
             tools.resetForm();
+            
+            
+            tools.props.setUsers([...tools.props.users, response.data])
+            console.log(tools.props.users);
+           
+         
         })
         .catch(error=>{
             console.log(error);
